@@ -81,11 +81,11 @@
   <!-- 主體卡牌區 -->
   <main class="w-full max-w-sm flex flex-col items-center my-auto z-10">
     
-    <!-- 分類切換 -->
+    <!-- 分類切換（已完全刪除數字與括號） -->
     <div class="flex gap-2 mb-6 bg-slate-800/80 p-1.5 rounded-full border border-slate-700/60 font-sans text-xs md:text-sm">
-      <button onclick="setCategory('all')" id="btn-all" class="px-4 py-1.5 rounded-full bg-amber-500 text-slate-950 font-bold transition">全部</button>
-      <button onclick="setCategory('creative')" id="btn-creative" class="px-4 py-1.5 rounded-full text-slate-300 hover:text-amber-300 transition">創作突破</button>
-      <button onclick="setCategory('mind')" id="btn-mind" class="px-4 py-1.5 rounded-full text-slate-300 hover:text-amber-300 transition">解憂陪伴</button>
+      <button onclick="setCategory('all')" id="btn-all" class="px-5 py-1.5 rounded-full bg-amber-500 text-slate-950 font-bold transition">全部</button>
+      <button onclick="setCategory('creative')" id="btn-creative" class="px-5 py-1.5 rounded-full text-slate-300 hover:text-amber-300 transition">創作突破</button>
+      <button onclick="setCategory('mind')" id="btn-mind" class="px-5 py-1.5 rounded-full text-slate-300 hover:text-amber-300 transition">解憂陪伴</button>
     </div>
 
     <!-- 3D 卡牌 -->
@@ -112,11 +112,11 @@
           </div>
         </div>
 
-        <!-- 卡背面 (翻開後內容) -->
+        <!-- 卡背面 (翻開後內容，右上角已完全移除編號顯示) -->
         <div class="card-back flex flex-col justify-between p-6 text-center select-none">
           <div class="w-full border-b border-amber-400/30 pb-2 flex justify-between items-center">
             <span id="cardCategory" class="text-amber-400 text-xs font-sans tracking-widest font-bold">靈感指引</span>
-            <span id="cardId" class="text-amber-300/50 text-xs font-mono">#01</span>
+            <span class="text-amber-300/50 text-xs font-mono">✧</span>
           </div>
 
           <div class="my-auto px-2">
@@ -153,20 +153,97 @@
   </footer>
 
   <script>
+    // 完整 40 張卡牌陣容 (創作突破 20 + 解憂陪伴 20)
     const cards = [
-      { id: "01", type: "creative", tag: "創作突破", quote: "「試著將現有問題的反面，當作最好的解決方案。」", detail: "有時候突破點不在於正面硬碰硬，而是退一步順應限制。" },
-      { id: "02", type: "creative", tag: "創作突破", quote: "「拿掉最顯眼的一個元素，看看畫面會發生什麼事。」", detail: "簡化往往能帶來更強大的視覺與思想張力。" },
-      { id: "03", type: "creative", tag: "創作突破", quote: "「將兩個看似毫無關聯的概念，強制結合在一起。」", detail: "創意的本質就是舊元素的重新組合。" },
-      { id: "04", type: "mind", tag: "解憂陪伴", quote: "「你不需要現在就想通一切，允許自己暫時迷惘。」", detail: "迷惘代表你正在探索未知的邊界，給自己一點時間。" },
-      { id: "05", type: "mind", tag: "解憂陪伴", quote: "「專注於今天能完成的微小動作，哪怕只是收拾桌面。」", detail: "拿回掌控感的第一步，永遠從小事開始。" },
-      { id: "06", type: "mind", tag: "解憂陪伴", quote: "「暫時放下優劣對錯，單純體驗當下的過程。」", detail: "過度追求完美的成果，往往是阻礙行動的元凶。" },
-      { id: "07", type: "creative", tag: "創作突破", quote: "「用 10 歲小孩聽得懂的方式，重新解釋你的點子。」", detail: "如果無法簡單說明，代表你尚未抓到核心。" },
-      { id: "08", type: "mind", tag: "解憂陪伴", quote: "「休息不是偷懶，而是思考沉澱的必經過程。」", detail: "靈感往往在你鬆開繃緊的大腦時悄悄溜進來。" }
+      // 創作突破 (20 張)
+      { type: "creative", tag: "創作突破", quote: "「試著將現有問題的反面，當作最好的解決方案。」", detail: "有時候突破點不在於正面硬碰硬，而是退一步順應限制。" },
+      { type: "creative", tag: "創作突破", quote: "「拿掉最顯眼的一個元素，看看畫面會發生什麼事。」", detail: "簡化往往能帶來更強大的視覺與思想張力。" },
+      { type: "creative", tag: "創作突破", quote: "「將兩個看似毫無關聯的概念，強制結合在一起。」", detail: "創意的本質就是舊元素的重新組合。" },
+      { type: "creative", tag: "創作突破", quote: "「用 10 歲小孩聽得懂的方式，重新解釋你的點子。」", detail: "如果無法簡單說明，代表你尚未抓到核心。" },
+      { type: "creative", tag: "創作突破", quote: "「故意做一個最壞、最荒謬的版本。」", detail: "打破完美的包袱，好靈魂往往藏在荒謬的嘗試裡。" },
+      { type: "creative", tag: "創作突破", quote: "「改變你的工作環境，哪怕只是換一張椅子。」", detail: "視角的轉變能瞬間帶動大腦神經網絡的新連結。" },
+      { type: "creative", tag: "創作突破", quote: "「限制自己的工具，只用三種顏色或一個按鈕。」", detail: "極致的限制是觸發極致創意的最佳催化劑。" },
+      { type: "creative", tag: "創作突破", quote: "「從結局開始倒推，思考最後一步是怎麼發生的。」", detail: "倒敘思考能幫助你繞過習慣性的邏輯死角。" },
+      { type: "creative", tag: "創作突破", quote: "「問問自己：如果是你最崇拜的人，他會怎麼做？」", detail: "借用大師的視角，暫時脫離個人的經驗局限。" },
+      { type: "creative", tag: "創作突破", quote: "「把重點放在『情緒』，而非『功能』上。」", detail: "人們會忘記你做了什麼，但永遠記得你給的感受。" },
+      { type: "creative", tag: "創作突破", quote: "「快速產出 5 個垃圾點子，速度優先於質量。」", detail: "先讓流速出來，過濾與修飾是下一步的事。" },
+      { type: "creative", tag: "創作突破", quote: "「加入一點『不完美』，讓作品擁有呼吸感。」", detail: "太過精緻容易產生距離感，瑕疵反而締造親和力。" },
+      { type: "creative", tag: "創作突破", quote: "「閉上眼睛，感受這個作品聲音或觸感的節奏。」", detail: "跨感官的聯想能激發非線性的創意靈感。" },
+      { type: "creative", tag: "創作突破", quote: "「把作品的尺寸放大十倍，或者縮小十倍。」", detail: "比例的極端改變會瞬間創造出全新的視覺戲劇感。" },
+      { type: "creative", tag: "創作突破", quote: "「尋找大自然中的結構，並嘗試複製它。」", detail: "大自然是歷經億萬年演化優化的設計師。" },
+      { type: "creative", tag: "創作突破", quote: "「將你的靈感說給一個非專業的朋友聽。」", detail: "觀察他們的反應，尋找最直覺的亮點。" },
+      { type: "creative", tag: "創作突破", quote: "「給創作設下 15 分鐘的極限計時。」", detail: "時間壓迫感能迫使大腦跳過猶豫，直奔直覺。" },
+      { type: "creative", tag: "創作突破", quote: "「尋找一個被大眾忽視的冷門領域汲取養分。」", detail: "跨界借鑑往往是創造差異化的關鍵路徑。" },
+      { type: "creative", tag: "創作突破", quote: "「專注於『留白』，學習不填滿的藝術。」", detail: "給欣賞者留有想象與互動的空間。" },
+      { type: "creative", tag: "創作突破", quote: "「問問自己：這能為世界帶來什麼微小的溫暖？」", detail: "意義感能賦予作品持久的生命力。" },
+
+      // 解憂陪伴 (20 張)
+      { type: "mind", tag: "解憂陪伴", quote: "「你不需要現在就想通一切，允許自己暫時迷惘。」", detail: "迷惘代表你正在探索未知的邊界，給自己一點時間。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「專注於今天能完成的微小動作，哪怕只是收拾桌面。」", detail: "拿回掌控感的第一步，永遠從小事開始。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「暫時放下優劣對錯，單純體驗當下的過程。」", detail: "過度追求完美的成果，往往是阻礙行動的元凶。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「休息不是偷懶，而是思考沉澱的必經過程。」", detail: "靈感往往在你鬆開繃緊的大腦時悄悄溜進來。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「接納當下的焦慮，它只是提醒你在乎這件事。」", detail: "情緒是訊號而非敵人，溫和地對它說一聲『謝謝你』。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「深深地吸氣四秒，吐氣六秒，重複三次。」", detail: "調整呼吸是最快速切換副交感神經、放鬆心境的方式。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「別拿別人的精采花絮，來對比自己的幕後花絮。」", detail: "每個人都有屬於自己的季節與綻放節奏。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「你已經做得比自己想像中還要好了。」", detail: "記得為自己點滴的進步給予肯定的掌聲。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「去喝一杯溫水，感受水流過喉嚨的溫度。」", detail: "將注意力拉回身體感官，能讓飛揚的思緒落地。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「拒絕是不需要感到愧疚的自我保護。」", detail: "勇敢維護自己的能量邊界，才是對彼此負責任的表現。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「這只是一個壞掉的瞬間，不是糟糕的一生。」", detail: "雨終究會停，雲層背後陽光一直都在。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「試著原諒那個曾經做錯決定的自己。」", detail: "當時的你，已經用了那時所能擁有的最大智慧。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「去戶外抬頭看看天空，感受世界的遼闊。」", detail: "自然界的大尺度能為我們帶來豁達的視野。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「把煩惱寫在紙上，然後把它撕掉。」", detail: "具象化的儀式感能幫助大腦清理積壓的情緒垃圾。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「學會擁抱不完美，那是光照進來的地方。」", detail: "缺陷正是構成你獨一無二魅力的關鍵。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「給自己一個擁抱，雙手交叉放在肩膀上。」", detail: "肢體的自我觸碰能釋放催產素，帶來安全感。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「慢慢來，比較快。」", detail: "穩紮穩打的步調，反而能帶你走得更遠更高。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「今天晚上早點睡，明日又是嶄新的一天。」", detail: "充足的睡眠是修復情緒與大腦最好的良藥。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「感謝今天順利完成三件小事的自己。」", detail: "用感恩的心態結束一天，能累積內心的豐盈感。" },
+      { type: "mind", tag: "解憂陪伴", quote: "「宇宙正以它獨特的方式愛著你。」", detail: "相信所有的安排，都有其深遠而美好的意圖。" }
     ];
 
     let currentCategory = 'all';
     let isFlipped = false;
     let currentCard = null;
+
+    // Web Audio 音效產生器 (無需外部 MP3 檔案)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+    function playFlipSound() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      
+      // 模擬風切翻牌聲
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.15);
+      
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.15);
+    }
+
+    function playChimeSound() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      
+      // 模擬微光叮聲
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
+      osc.frequency.exponentialRampToValueAtTime(1760, audioCtx.currentTime + 0.3);
+
+      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.5);
+    }
 
     function setCategory(cat) {
       currentCategory = cat;
@@ -174,9 +251,9 @@
       btns.forEach(b => {
         const el = document.getElementById(`btn-${b}`);
         if(b === cat) {
-          el.className = "px-4 py-1.5 rounded-full bg-amber-500 text-slate-950 font-bold transition";
+          el.className = "px-5 py-1.5 rounded-full bg-amber-500 text-slate-950 font-bold transition";
         } else {
-          el.className = "px-4 py-1.5 rounded-full text-slate-300 hover:text-amber-300 transition";
+          el.className = "px-5 py-1.5 rounded-full text-slate-300 hover:text-amber-300 transition";
         }
       });
       if(isFlipped) resetCard();
@@ -185,15 +262,20 @@
     function flipCard() {
       const cardEl = document.getElementById('card');
       if (!isFlipped) {
+        playFlipSound();
         pickRandomCard();
         cardEl.classList.add('flipped');
         isFlipped = true;
 
+        setTimeout(() => {
+          playChimeSound();
+        }, 200);
+
         confetti({
-          particleCount: 40,
+          particleCount: 45,
           spread: 60,
           origin: { y: 0.6 },
-          colors: ['#f59e0b', '#fbbf24', '#d97706']
+          colors: ['#f59e0b', '#fbbf24', '#d97706', '#a855f7']
         });
       }
     }
@@ -213,7 +295,6 @@
       currentCard = random;
 
       document.getElementById('cardCategory').textContent = random.tag;
-      document.getElementById('cardId').textContent = `#${random.id}`;
       document.getElementById('cardQuote').textContent = random.quote;
       document.getElementById('cardDetail').textContent = random.detail;
     }
@@ -221,11 +302,12 @@
     function resetAndDraw() {
       const cardEl = document.getElementById('card');
       if (isFlipped) {
+        playFlipSound();
         cardEl.classList.remove('flipped');
         isFlipped = false;
         setTimeout(() => {
           flipCard();
-        }, 400);
+        }, 450);
       } else {
         flipCard();
       }
