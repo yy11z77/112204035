@@ -1,260 +1,243 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="zh-TW">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2299.6">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000}
-    p.p2 {margin: 0.0px 0.0px 12.0px 0.0px; font: 12.0px Times; -webkit-text-stroke: #000000; min-height: 14.0px}
-    span.s1 {font-kerning: none}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>微光靈感卡 Whisper Cards | 沉浸式靈感抽取器</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&family=Plus+Jakarta+Sans:wght@400;600&display=swap');
+    
+    body {
+      font-family: 'Noto Serif TC', serif;
+      background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%);
+    }
+
+    /* 3D 卡牌翻轉效果 */
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+    
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transform-style: preserve-3d;
+    }
+
+    .card-inner.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden;
+      border-radius: 1.25rem;
+    }
+
+    .card-front {
+      background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);
+      border: 2px solid rgba(251, 191, 36, 0.4);
+    }
+
+    .card-back {
+      background: linear-gradient(135deg, #1e1b4b 0%, #311b92 100%);
+      border: 2px solid rgba(251, 191, 36, 0.6);
+      transform: rotateY(180deg);
+    }
+
+    /* 光暈與發光特效 */
+    .glow-effect {
+      box-shadow: 0 0 25px rgba(251, 191, 36, 0.2);
+    }
+    .glow-effect:hover {
+      box-shadow: 0 0 40px rgba(251, 191, 36, 0.4);
+    }
   </style>
 </head>
-<body>
-<p class="p1"><span class="s1">&lt;!DOCTYPE html&gt;</span></p>
-<p class="p1"><span class="s1">&lt;html lang="zh-TW"&gt;</span></p>
-<p class="p1"><span class="s1">&lt;head&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;title&gt;微光靈感卡 Whisper Cards | 沉浸式靈感抽取器&lt;/title&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;!-- Tailwind CSS --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;!-- Canvas Confetti CDN --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"&gt;&lt;/script&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">  </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;style&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700;900&amp;family=Plus+Jakarta+Sans:wght@400;600&amp;display=swap');</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>body {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>font-family: 'Noto Serif TC', serif;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>/* 3D 卡牌翻轉效果 */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.perspective-1000 {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>perspective: 1000px;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.card-inner {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>position: relative;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>height: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>transform-style: preserve-3d;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.card-inner.flipped {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>transform: rotateY(180deg);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.card-front, .card-back {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>position: absolute;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>width: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>height: 100%;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>-webkit-backface-visibility: hidden;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>backface-visibility: hidden;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border-radius: 1.25rem;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.card-front {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: linear-gradient(135deg, #312e81 0%, #1e1b4b 100%);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border: 2px solid rgba(251, 191, 36, 0.4);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.card-back {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>background: linear-gradient(135deg, #1e1b4b 0%, #311b92 100%);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>border: 2px solid rgba(251, 191, 36, 0.6);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>transform: rotateY(180deg);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>/* 光暈與發光特效 */</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.glow-effect {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>box-shadow: 0 0 25px rgba(251, 191, 36, 0.2);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>.glow-effect:hover {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>box-shadow: 0 0 40px rgba(251, 191, 36, 0.4);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/head&gt;</span></p>
-<p class="p1"><span class="s1">&lt;body class="min-h-screen text-slate-100 flex flex-col justify-between items-center p-4 relative overflow-x-hidden"&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;!-- 背景裝飾微光 --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;div class="absolute top-10 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"&gt;&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;!-- Header --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;header class="text-center my-6 z-10"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;h1 class="text-3xl md:text-4xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 mb-2"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>✧ 微光靈感卡 ✧</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/h1&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;p class="text-slate-400 text-xs md:text-sm tracking-widest font-sans"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>閉上雙眼，靜心呼吸，隨心抽出一張專屬於你的靈感</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/header&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;!-- 主體卡牌區 --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;main class="w-full max-w-sm flex flex-col items-center my-auto z-10"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">    </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;!-- 分類切換 --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="flex gap-2 mb-6 bg-slate-800/80 p-1.5 rounded-full border border-slate-700/60 font-sans text-xs md:text-sm"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;button onclick="setCategory('all')" id="btn-all" class="px-4 py-1.5 rounded-full bg-amber-500 text-slate-950 font-bold transition"&gt;全部&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;button onclick="setCategory('creative')" id="btn-creative" class="px-4 py-1.5 rounded-full text-slate-300 hover:text-amber-300 transition"&gt;創作突破&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;button onclick="setCategory('mind')" id="btn-mind" class="px-4 py-1.5 rounded-full text-slate-300 hover:text-amber-300 transition"&gt;解憂陪伴&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;!-- 3D 卡牌 --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="w-72 h-[420px] perspective-1000 cursor-pointer group" onclick="flipCard()"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;div id="card" class="card-inner glow-effect rounded-2xl transition-all duration-300"&gt;</span></p>
-<p class="p2"><span class="s1"><span class="Apple-converted-space">        </span></span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;!-- 卡正面 (未翻開) --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="card-front flex flex-col items-center justify-between p-6 text-center select-none"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="w-full border-b border-amber-400/20 pb-3 flex justify-between items-center text-amber-300/60 text-xs tracking-widest"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;span&gt;WHISPER&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;span&gt;✧&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;span&gt;CARDS&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="my-auto flex flex-col items-center gap-3"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;div class="w-16 h-16 rounded-full border border-amber-400/40 flex items-center justify-center text-amber-300 text-2xl group-hover:scale-110 transition duration-300"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>✦</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;p class="text-amber-200/80 text-sm tracking-wider"&gt;點擊抽取靈感&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="w-full border-t border-amber-400/20 pt-3 text-slate-500 text-[10px] tracking-widest"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>TOUCH TO UNVEIL</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;!-- 卡背面 (翻開後內容) --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;div class="card-back flex flex-col justify-between p-6 text-center select-none"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="w-full border-b border-amber-400/30 pb-2 flex justify-between items-center"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;span id="cardCategory" class="text-amber-400 text-xs font-sans tracking-widest font-bold"&gt;靈感指引&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;span id="cardId" class="text-amber-300/50 text-xs font-mono"&gt;#01&lt;/span&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="my-auto px-2"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;h2 id="cardQuote" class="text-lg md:text-xl font-bold text-amber-100 leading-relaxed tracking-wide mb-4"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>「抽卡中...」</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/h2&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;p id="cardDetail" class="text-xs text-slate-300/80 font-sans leading-relaxed"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>點擊下方的重抽按鈕即可開啟新的指引。</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/p&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;div class="w-full border-t border-amber-400/30 pt-3 flex justify-around text-amber-300/80 text-xs font-sans"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;button onclick="copyQuote(event)" class="hover:text-amber-200 flex items-center gap-1 transition"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">              </span>📋 複製金句</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">            </span>&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/div&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;!-- 控制按鈕 --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;div class="mt-8 flex gap-4 font-sans"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;button id="drawBtn" onclick="resetAndDraw()" class="px-8 py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold rounded-full shadow-lg transform active:scale-95 transition-all duration-200 text-sm tracking-wider"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>🔄 換一張靈感</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>&lt;/button&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/main&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;!-- Footer --&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;footer class="mt-8 text-center text-[11px] text-slate-500 font-sans tracking-widest"&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>DESIGNED WITH AI &amp; VIBE CODING • WHISPER CARDS</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/footer&gt;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;script&gt;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>const cards = [</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{ id: "01", type: "creative", tag: "創作突破", quote: "「試著將現有問題的反面，當作最好的解決方案。」", detail: "有時候突破點不在於正面硬碰硬，而是退一步順應限制。" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{ id: "02", type: "creative", tag: "創作突破", quote: "「拿掉最顯眼的一個元素，看看畫面會發生什麼事。」", detail: "簡化往往能帶來更強大的視覺與思想張力。" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{ id: "03", type: "creative", tag: "創作突破", quote: "「將兩個看似毫無關聯的概念，強制結合在一起。」", detail: "創意的本質就是舊元素的重新組合。" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{ id: "04", type: "mind", tag: "解憂陪伴", quote: "「你不需要現在就想通一切，允許自己暫時迷惘。」", detail: "迷惘代表你正在探索未知的邊界，給自己一點時間。" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{ id: "05", type: "mind", tag: "解憂陪伴", quote: "「專注於今天能完成的微小動作，哪怕只是收拾桌面。」", detail: "拿回掌控感的第一步，永遠從小事開始。" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{ id: "06", type: "mind", tag: "解憂陪伴", quote: "「暫時放下優劣對錯，單純體驗當下的過程。」", detail: "過度追求完美的成果，往往是阻礙行動的元凶。" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{ id: "07", type: "creative", tag: "創作突破", quote: "「用 10 歲小孩聽得懂的方式，重新解釋你的點子。」", detail: "如果無法簡單說明，代表你尚未抓到核心。" },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>{ id: "08", type: "mind", tag: "解憂陪伴", quote: "「休息不是偷懶，而是思考沉澱的必經過程。」", detail: "靈感往往在你鬆開繃緊的大腦時悄悄溜進來。" }</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>];</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>let currentCategory = 'all';</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>let isFlipped = false;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>let currentCard = null;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>function setCategory(cat) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>currentCategory = cat;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const btns = ['all', 'creative', 'mind'];</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>btns.forEach(b =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>const el = document.getElementById(`btn-${b}`);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>if(b === cat) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>el.className = "px-4 py-1.5 rounded-full bg-amber-500 text-slate-950 font-bold transition";</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>} else {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>el.className = "px-4 py-1.5 rounded-full text-slate-300 hover:text-amber-300 transition";</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if(isFlipped) resetCard();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>function flipCard() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const cardEl = document.getElementById('card');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (!isFlipped) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>pickRandomCard();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>cardEl.classList.add('flipped');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>isFlipped = true;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>confetti({</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>particleCount: 40,</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>spread: 60,</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>origin: { y: 0.6 },</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>colors: ['#f59e0b', '#fbbf24', '#d97706']</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>});</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>function resetCard() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const cardEl = document.getElementById('card');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>cardEl.classList.remove('flipped');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>isFlipped = false;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>function pickRandomCard() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>let pool = cards;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (currentCategory !== 'all') {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>pool = cards.filter(c =&gt; c.type === currentCategory);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const random = pool[Math.floor(Math.random() * pool.length)];</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>currentCard = random;</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>document.getElementById('cardCategory').textContent = random.tag;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>document.getElementById('cardId').textContent = `#${random.id}`;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>document.getElementById('cardQuote').textContent = random.quote;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>document.getElementById('cardDetail').textContent = random.detail;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>function resetAndDraw() {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>const cardEl = document.getElementById('card');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (isFlipped) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>cardEl.classList.remove('flipped');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>isFlipped = false;</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>setTimeout(() =&gt; {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">          </span>flipCard();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>}, 400);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>} else {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>flipCard();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p2"><span class="s1"></span><br></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>function copyQuote(e) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>e.stopPropagation();</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>if (currentCard) {</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>navigator.clipboard.writeText(`${currentCard.quote} — 微光靈感卡`);</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">        </span>alert('✨ 已複製金句到剪貼簿！');</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">      </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">    </span>}</span></p>
-<p class="p1"><span class="s1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/body&gt;</span></p>
-<p class="p1"><span class="s1">&lt;/html&gt;</span></p>
+<body class="min-h-screen text-slate-100 flex flex-col justify-between items-center p-4 relative overflow-x-hidden">
+
+  <!-- 背景裝飾微光 -->
+  <div class="absolute top-10 left-1/2 -translate-x-1/2 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+  <!-- Header -->
+  <header class="text-center my-6 z-10">
+    <h1 class="text-3xl md:text-4xl font-bold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-200 mb-2">
+      ✧ 微光靈感卡 ✧
+    </h1>
+    <p class="text-slate-400 text-xs md:text-sm tracking-widest font-sans">
+      閉上雙眼，靜心呼吸，隨心抽出一張專屬於你的靈感
+    </p>
+  </header>
+
+  <!-- 主體卡牌區 -->
+  <main class="w-full max-w-sm flex flex-col items-center my-auto z-10">
+    
+    <!-- 分類切換 -->
+    <div class="flex gap-2 mb-6 bg-slate-800/80 p-1.5 rounded-full border border-slate-700/60 font-sans text-xs md:text-sm">
+      <button onclick="setCategory('all')" id="btn-all" class="px-4 py-1.5 rounded-full bg-amber-500 text-slate-950 font-bold transition">全部</button>
+      <button onclick="setCategory('creative')" id="btn-creative" class="px-4 py-1.5 rounded-full text-slate-300 hover:text-amber-300 transition">創作突破</button>
+      <button onclick="setCategory('mind')" id="btn-mind" class="px-4 py-1.5 rounded-full text-slate-300 hover:text-amber-300 transition">解憂陪伴</button>
+    </div>
+
+    <!-- 3D 卡牌 -->
+    <div class="w-72 h-[420px] perspective-1000 cursor-pointer group" onclick="flipCard()">
+      <div id="card" class="card-inner glow-effect rounded-2xl transition-all duration-300">
+        
+        <!-- 卡正面 (未翻開) -->
+        <div class="card-front flex flex-col items-center justify-between p-6 text-center select-none">
+          <div class="w-full border-b border-amber-400/20 pb-3 flex justify-between items-center text-amber-300/60 text-xs tracking-widest">
+            <span>WHISPER</span>
+            <span>✧</span>
+            <span>CARDS</span>
+          </div>
+
+          <div class="my-auto flex flex-col items-center gap-3">
+            <div class="w-16 h-16 rounded-full border border-amber-400/40 flex items-center justify-center text-amber-300 text-2xl group-hover:scale-110 transition duration-300">
+              ✦
+            </div>
+            <p class="text-amber-200/80 text-sm tracking-wider">點擊抽取靈感</p>
+          </div>
+
+          <div class="w-full border-t border-amber-400/20 pt-3 text-slate-500 text-[10px] tracking-widest">
+            TOUCH TO UNVEIL
+          </div>
+        </div>
+
+        <!-- 卡背面 (翻開後內容) -->
+        <div class="card-back flex flex-col justify-between p-6 text-center select-none">
+          <div class="w-full border-b border-amber-400/30 pb-2 flex justify-between items-center">
+            <span id="cardCategory" class="text-amber-400 text-xs font-sans tracking-widest font-bold">靈感指引</span>
+            <span id="cardId" class="text-amber-300/50 text-xs font-mono">#01</span>
+          </div>
+
+          <div class="my-auto px-2">
+            <h2 id="cardQuote" class="text-lg md:text-xl font-bold text-amber-100 leading-relaxed tracking-wide mb-4">
+              「抽卡中...」
+            </h2>
+            <p id="cardDetail" class="text-xs text-slate-300/80 font-sans leading-relaxed">
+              點擊下方的重抽按鈕即可開啟新的指引。
+            </p>
+          </div>
+
+          <div class="w-full border-t border-amber-400/30 pt-3 flex justify-around text-amber-300/80 text-xs font-sans">
+            <button onclick="copyQuote(event)" class="hover:text-amber-200 flex items-center gap-1 transition">
+              📋 複製金句
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 控制按鈕 -->
+    <div class="mt-8 flex gap-4 font-sans">
+      <button id="drawBtn" onclick="resetAndDraw()" class="px-8 py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold rounded-full shadow-lg transform active:scale-95 transition-all duration-200 text-sm tracking-wider">
+        🔄 換一張靈感
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-8 text-center text-[11px] text-slate-500 font-sans tracking-widest">
+    DESIGNED WITH AI & VIBE CODING • WHISPER CARDS
+  </footer>
+
+  <script>
+    const cards = [
+      { id: "01", type: "creative", tag: "創作突破", quote: "「試著將現有問題的反面，當作最好的解決方案。」", detail: "有時候突破點不在於正面硬碰硬，而是退一步順應限制。" },
+      { id: "02", type: "creative", tag: "創作突破", quote: "「拿掉最顯眼的一個元素，看看畫面會發生什麼事。」", detail: "簡化往往能帶來更強大的視覺與思想張力。" },
+      { id: "03", type: "creative", tag: "創作突破", quote: "「將兩個看似毫無關聯的概念，強制結合在一起。」", detail: "創意的本質就是舊元素的重新組合。" },
+      { id: "04", type: "mind", tag: "解憂陪伴", quote: "「你不需要現在就想通一切，允許自己暫時迷惘。」", detail: "迷惘代表你正在探索未知的邊界，給自己一點時間。" },
+      { id: "05", type: "mind", tag: "解憂陪伴", quote: "「專注於今天能完成的微小動作，哪怕只是收拾桌面。」", detail: "拿回掌控感的第一步，永遠從小事開始。" },
+      { id: "06", type: "mind", tag: "解憂陪伴", quote: "「暫時放下優劣對錯，單純體驗當下的過程。」", detail: "過度追求完美的成果，往往是阻礙行動的元凶。" },
+      { id: "07", type: "creative", tag: "創作突破", quote: "「用 10 歲小孩聽得懂的方式，重新解釋你的點子。」", detail: "如果無法簡單說明，代表你尚未抓到核心。" },
+      { id: "08", type: "mind", tag: "解憂陪伴", quote: "「休息不是偷懶，而是思考沉澱的必經過程。」", detail: "靈感往往在你鬆開繃緊的大腦時悄悄溜進來。" }
+    ];
+
+    let currentCategory = 'all';
+    let isFlipped = false;
+    let currentCard = null;
+
+    function setCategory(cat) {
+      currentCategory = cat;
+      const btns = ['all', 'creative', 'mind'];
+      btns.forEach(b => {
+        const el = document.getElementById(`btn-${b}`);
+        if(b === cat) {
+          el.className = "px-4 py-1.5 rounded-full bg-amber-500 text-slate-950 font-bold transition";
+        } else {
+          el.className = "px-4 py-1.5 rounded-full text-slate-300 hover:text-amber-300 transition";
+        }
+      });
+      if(isFlipped) resetCard();
+    }
+
+    function flipCard() {
+      const cardEl = document.getElementById('card');
+      if (!isFlipped) {
+        pickRandomCard();
+        cardEl.classList.add('flipped');
+        isFlipped = true;
+
+        confetti({
+          particleCount: 40,
+          spread: 60,
+          origin: { y: 0.6 },
+          colors: ['#f59e0b', '#fbbf24', '#d97706']
+        });
+      }
+    }
+
+    function resetCard() {
+      const cardEl = document.getElementById('card');
+      cardEl.classList.remove('flipped');
+      isFlipped = false;
+    }
+
+    function pickRandomCard() {
+      let pool = cards;
+      if (currentCategory !== 'all') {
+        pool = cards.filter(c => c.type === currentCategory);
+      }
+      const random = pool[Math.floor(Math.random() * pool.length)];
+      currentCard = random;
+
+      document.getElementById('cardCategory').textContent = random.tag;
+      document.getElementById('cardId').textContent = `#${random.id}`;
+      document.getElementById('cardQuote').textContent = random.quote;
+      document.getElementById('cardDetail').textContent = random.detail;
+    }
+
+    function resetAndDraw() {
+      const cardEl = document.getElementById('card');
+      if (isFlipped) {
+        cardEl.classList.remove('flipped');
+        isFlipped = false;
+        setTimeout(() => {
+          flipCard();
+        }, 400);
+      } else {
+        flipCard();
+      }
+    }
+
+    function copyQuote(e) {
+      e.stopPropagation();
+      if (currentCard) {
+        navigator.clipboard.writeText(`${currentCard.quote} — 微光靈感卡`);
+        alert('✨ 已複製金句到剪貼簿！');
+      }
+    }
+  </script>
 </body>
 </html>
