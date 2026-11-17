@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>給大一新生的第一堂課：認識 MCP (Model Context Protocol)</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #38bdf8;
+      --accent-secondary: #818cf8;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #34d399;
+      --warning: #fbbf24;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans TC", sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 32px;
+      background: rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid #334155;
+      font-size: 0.9rem;
+    }
+    .wiki-badge {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .progress-bar {
+      position: fixed;
+      top: 0; left: 0; height: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-secondary));
+      transition: width 0.3s ease;
+      z-index: 100;
+    }
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 48px;
+      position: relative;
+    }
+    .slide {
+      display: none;
+      width: 100%;
+      max-width: 1000px;
+      animation: fadeIn 0.35s ease;
+    }
+    .slide.active { display: block; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h1 { font-size: 2.8rem; line-height: 1.2; margin-bottom: 16px; background: linear-gradient(90deg, #fff, var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    h2 { font-size: 2rem; margin-bottom: 12px; color: var(--accent); }
+    .subtitle { font-size: 1.25rem; color: var(--text-muted); margin-bottom: 28px; line-height: 1.6; }
+    .analogy-box {
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.12), rgba(129, 140, 248, 0.12));
+      border-left: 4px solid var(--accent);
+      padding: 18px 24px;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 22px;
+      transition: transform 0.2s;
+    }
+    .card:hover { transform: translateY(-3px); border-color: var(--accent); }
+    .card h3 { color: var(--accent); margin-bottom: 10px; font-size: 1.25rem; }
+    .card p, .card li { color: #cbd5e1; line-height: 1.6; font-size: 1rem; }
+    .card ul { padding-left: 20px; margin-top: 8px; }
+    .tab-btns { display: flex; gap: 12px; margin-bottom: 18px; }
+    .tab-btn {
+      background: var(--card-bg); color: var(--text-main);
+      border: 1px solid #475569; padding: 10px 20px; border-radius: 8px;
+      cursor: pointer; font-size: 1rem; font-weight: 600;
+    }
+    .tab-btn.active { background: var(--accent); color: #0f172a; border-color: var(--accent); }
+    .quiz-option {
+      display: block; width: 100%; text-align: left;
+      background: var(--card-bg); color: var(--text-main);
+      border: 1px solid #475569; padding: 14px 20px; border-radius: 8px;
+      margin-bottom: 12px; cursor: pointer; font-size: 1.05rem;
+    }
+    .quiz-option:hover { border-color: var(--accent); }
+    .quiz-option.correct { background: rgba(52, 211, 153, 0.2); border-color: var(--success); color: var(--success); }
+    .quiz-option.wrong { background: rgba(248, 113, 113, 0.2); border-color: #f87171; color: #fca5a5; }
+    footer {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 32px; background: rgba(15, 23, 42, 0.9); border-top: 1px solid #334155;
+    }
+    .nav-btn {
+      background: var(--card-bg); color: var(--text-main); border: 1px solid #475569;
+      padding: 8px 20px; border-radius: 8px; cursor: pointer; font-size: 1rem;
+    }
+    .nav-btn:hover:not(:disabled) { background: var(--accent); color: #0f172a; }
+    .nav-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #334155; padding: 12px; text-align: left; }
+    th { background: #1e293b; color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<header>
+  <div>🎓 <strong>AI 基礎科普教學</strong>｜給大一新生的技術指南</div>
+  <div class="wiki-badge" id="wikiSource">知識來源：LLM Wiki Index</div>
+</header>
+
+<main>
+  <section class="slide active" data-wiki="知識庫總覽 (5 篇真實文獻 Ingest)">
+    <p style="color: var(--accent); font-weight: bold; margin-bottom: 12px;">MODEL CONTEXT PROTOCOL (MCP)</p>
+    <h1>讓 AI 真正「長出手腳」的通用標準</h1>
+    <p class="subtitle">不用寫複雜的轉接程式，用一個生活化比喻，帶你 5 分鐘搞懂什麼是 MCP 協定！</p>
+    <div class="grid-3">
+      <div class="card">
+        <h3>🎯 適合對象</h3>
+        <p>完全沒接觸過 AI 開發的大一新生，零程式基礎也能秒懂。</p>
+      </div>
+      <div class="card">
+        <h3>📚 學習目標</h3>
+        <p>理解 MCP 解決了什麼痛點、三大角色分工，以及它能幫我們做什麼。</p>
+      </div>
+      <div class="card">
+        <h3>⌨️ 操作提示</h3>
+        <p>使用鍵盤 <strong>← / → 方向鍵</strong> 或下方按鈕切換投影片，內含互動測驗！</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-wiki="Wiki 01-Overview-and-PainPoints.md">
+    <h2>01. 為什麼我們需要 MCP？</h2>
+    <p class="subtitle">以前 AI 就像被關在房間裡的天才，雖然很聰明，但看不到你電腦裡的資料，也沒辦法幫你按按鈕。</p>
+    <div class="analogy-box">
+      💡 <strong>生活化比喻：AI 界的 USB-C 接口</strong><br>
+      以前每家手機充電線都不同（Lightning、Micro-USB），換設備就要換線；現在統一成 <strong>USB-C</strong>，一條線就能接螢幕、硬碟與充電器。MCP 就是統一「AI 模型」與「外部工具」之間的通用插頭！
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <h3>❌ 過去的困境：M × N 整合地獄</h3>
+        <p>如果有 3 款 AI（Claude, GPT, Gemini）要連接 4 種工具（Google Drive, GitHub, Slack, 資料庫），工程師就要寫 <strong>3 × 4 = 12 套</strong> 客製化連接程式，維護極度痛苦。</p>
+      </div>
+      <div class="card">
+        <h3>✅ 導入 MCP 後：M + N 標準化</h3>
+        <p>Anthropic 於 2024 年底開源此標準。AI 只要支援 MCP、工具也提供 MCP 接口，複雜度瞬間降為 <strong>3 + 4 = 7</strong>，一次對接、全體通用！</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-wiki="Wiki 02-Architecture-and-Components.md">
+    <h2>02. MCP 的系統架構與三大角色</h2>
+    <p class="subtitle">MCP 採用「主從式架構（Client-Server）」，由三個角色分工把 AI 與工具串起來。</p>
+    <div class="analogy-box">
+      🍽️ <strong>餐廳點餐比喻：</strong> <strong>Host</strong> 是想吃牛排的顧客，<strong>Client</strong> 是傳遞菜單的服務生，<strong>Server</strong> 則是真正負責煎牛排的廚房！
+    </div>
+    <div class="grid-3">
+      <div class="card">
+        <h3>1️⃣ MCP Host（主機）</h3>
+        <p><strong>你直接操作的 AI 軟體</strong>。</p>
+        <ul>
+          <li>負責管理對話介面與安全權限</li>
+          <li>例如：Claude Desktop 桌面版、Cursor 程式編輯器</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2️⃣ MCP Client（客戶端）</h3>
+        <p><strong>內建在 Host 裡的通訊員</strong>。</p>
+        <ul>
+          <li>負責與 Server 建立「一對一」專屬連線</li>
+          <li>按照標準格式傳遞請求與結果</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>3️⃣ MCP Server（伺服器）</h3>
+        <p><strong>連接特定工具的輕量外掛</strong>。</p>
+        <ul>
+          <li>對接單一資料源或功能</li>
+          <li>例如：Google Drive Server、本機檔案 Server</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-wiki="Wiki 03-Core-Capabilities.md">
+    <h2>03. MCP Server 能提供哪三種能力？</h2>
+    <p class="subtitle">點擊下方按鈕，看看「實習生工作包」裡的三種核心能力有什麼差別：</p>
+    <div class="tab-btns">
+      <button class="tab-btn active" onclick="showCap(0, this)">📖 Resources（資料資源）</button>
+      <button class="tab-btn" onclick="showCap(1, this)">🛠️ Tools（執行工具）</button>
+      <button class="tab-btn" onclick="showCap(2, this)">📝 Prompts（提示詞範本）</button>
+    </div>
+    <div class="card" id="capDisplay" style="min-height: 220px;">
+      <h3>📖 Resources（資料資源 — 唯讀背景知識）</h3>
+      <p style="margin-bottom: 12px;"><strong>比喻：公司的參考手冊（只能看，不能改）</strong></p>
+      <ul>
+        <li><strong>控制權：</strong>由使用者或應用程式主動提供給 AI 參考。</li>
+        <li><strong>特性：</strong>不會改變外部世界狀態，純粹讓 AI 讀取上下文（Context）。</li>
+        <li><strong>實際例子：</strong>讀取你電腦裡的 <code>期末報告草稿.txt</code> 或系統錯誤日誌。</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="slide" data-wiki="Wiki 04-Communication-and-Security.md (已套用新手難度過濾)">
+    <h2>04. 連線方式與「人類把關」安全機制</h2>
+    <p class="subtitle">讓 AI 幫你操作電腦很方便，但如果 AI 誤刪檔案怎麼辦？MCP 在設計時就加入了安全鎖！</p>
+    <div class="grid-2">
+      <div class="card">
+        <h3>🔌 兩種連線模式（Transport）</h3>
+        <ul>
+          <li><strong>本機模式（Stdio）：</strong>在你的電腦裡直接啟動小程式溝通，資料完全不經過網路，速度最快也最隱私。</li>
+          <li><strong>雲端模式（HTTP / SSE）：</strong>透過網路連接遠端伺服器，適合團隊共用企業資料庫。</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>🛡️ 人機協作把關（Human-in-the-Loop）</h3>
+        <ul>
+          <li><strong>銀行保險箱雙鑰匙原則：</strong>AI 雖然可以提議呼叫某個 Tool，但<strong>不能偷偷執行</strong>。</li>
+          <li><strong>強制授權彈窗：</strong>在寫入檔案或發送訊息前，Host 介面必須跳出確認視窗，等你按下「允許」才會真正執行。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-wiki="Wiki 05-RealWorld-UseCases.md">
+    <h2>05. 真實世界怎麼用？就像手機裝 App！</h2>
+    <p class="subtitle">只要在設定檔加上幾行文字安裝對應的 MCP Server，AI 立刻解鎖超能力：</p>
+    <div class="grid-2">
+      <div class="card">
+        <h3>📂 本機檔案整理（Filesystem Server）</h3>
+        <p>直接對 AI 說：「幫我把下載資料夾裡的 PDF 依照科目分類，並整理出大綱」，AI 就能直接讀取並歸檔。</p>
+      </div>
+      <div class="card">
+        <h3>💻 程式專案協作（GitHub Server）</h3>
+        <p>AI 可以直接查看專案程式碼變更紀錄、建立新分支，甚至自動幫你發起 Pull Request。</p>
+      </div>
+      <div class="card">
+        <h3>🗄️ 自然語言查資料庫（SQLite / Postgres）</h3>
+        <p>不會寫複雜的 SQL 語法也沒關係，直接用中文問問題，AI 會自動查詢資料表並生成分析圖表。</p>
+      </div>
+      <div class="card">
+        <h3>🌐 網頁自動測試（Puppeteer Server）</h3>
+        <p>AI 可以自己打開無頭瀏覽器、點擊網頁按鈕、截圖檢查你寫的作業網頁有沒有跑版！</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide" data-wiki="互動驗收：檢核 Wiki 01～03 核心概念">
+    <h2>06. 隨堂挑戰：大一新生理解度測試！</h2>
+    <p class="subtitle">問題：假設你請 AI 幫你「自動寄出一封請假信給教授」，這個動作屬於 MCP Server 的哪一種核心能力？</p>
+    <div id="quizContainer">
+      <button class="quiz-option" onclick="checkAnswer(this, false)">A. Resources（資料資源）— 因為它讀取了教授的 Email 地址</button>
+      <button class="quiz-option" onclick="checkAnswer(this, true)">B. Tools（執行工具）— 因為「寄信」改變了外部狀態，且會觸發你按下允許確認</button>
+      <button class="quiz-option" onclick="checkAnswer(this, false)">C. Prompts（提示詞範本）— 因為請假信需要固定的書信格式</button>
+    </div>
+    <p id="quizFeedback" style="margin-top: 16px; font-size: 1.1rem; font-weight: bold;"></p>
+  </section>
+
+  <section class="slide" data-wiki="Wiki 溯源對照表 (Doc 1 ~ Doc 5)">
+    <h2>07. 課程總結 & LLM Wiki 知識溯源</h2>
+    <p class="subtitle">本簡報所有內容皆由自建 LLM Wiki 萃取生成，確保資訊有憑有據：</p>
+    <table>
+      <thead>
+        <tr>
+          <th>簡報章節</th>
+          <th>對應 LLM Wiki 頁面</th>
+          <th>原始 Ingest 文獻來源</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>01. 痛點與 USB-C 比喻</td>
+          <td><code>01-Overview-and-PainPoints.md</code></td>
+          <td>Anthropic: <em>Introducing the Model Context Protocol</em></td>
+        </tr>
+        <tr>
+          <td>02. 三大角色架構</td>
+          <td><code>02-Architecture-and-Components.md</code></td>
+          <td>MCP Docs: <em>Core Architecture Overview</em></td>
+        </tr>
+        <tr>
+          <td>03. 三大核心能力</td>
+          <td><code>03-Core-Capabilities.md</code></td>
+          <td>MCP Docs: <em>Resources, Prompts, and Tools</em></td>
+        </tr>
+        <tr>
+          <td>04. 連線與安全把關</td>
+          <td><code>04-Communication-and-Security.md</code></td>
+          <td>MCP Spec: <em>Transports & Security</em></td>
+        </tr>
+        <tr>
+          <td>05. 實際應用場景</td>
+          <td><code>05-RealWorld-UseCases.md</code></td>
+          <td>GitHub: <em>modelcontextprotocol/servers</em></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+
+<footer>
+  <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>← 上一頁</button>
+  <div id="slideCounter" style="color: var(--text-muted); font-weight: bold;">1 / 8</div>
+  <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">下一頁 →</button>
+</footer>
+
+<script>
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const wikiSource = document.getElementById('wikiSource');
+  const slideCounter = document.getElementById('slideCounter');
+  const progressBar = document.getElementById('progressBar');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+
+  function updateUI() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
+    wikiSource.textContent = '知識來源：' + slides[currentSlide].dataset.wiki;
+    slideCounter.textContent = `${currentSlide + 1} / ${slides.length}`;
+    progressBar.style.width = `${((currentSlide + 1) / slides.length) * 100}%`;
+    prevBtn.disabled = currentSlide === 0;
+    nextBtn.disabled = currentSlide === slides.length - 1;
+  }
+
+  function changeSlide(dir) {
+    const next = currentSlide + dir;
+    if (next >= 0 && next < slides.length) {
+      currentSlide = next;
+      updateUI();
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+    if (e.key === 'ArrowLeft') changeSlide(-1);
+  });
+
+  const capData = [
+    {
+      title: '📖 Resources（資料資源 — 唯讀背景知識）',
+      analogy: '比喻：公司的參考手冊（只能看，不能改）',
+      points: [
+        '<strong>控制權：</strong>由使用者或應用程式主動提供給 AI 參考。',
+        '<strong>特性：</strong>不會改變外部世界狀態，純粹讓 AI 讀取上下文（Context）。',
+        '<strong>實際例子：</strong>讀取你電腦裡的 <code>期末報告草稿.txt</code> 或系統錯誤日誌。'
+      ]
+    },
+    {
+      title: '🛠️ Tools（執行工具 — 動手做事情）',
+      analogy: '比喻：公司的影印機與發信權限（會產生實際動作）',
+      points: [
+        '<strong>控制權：</strong>由 AI 模型根據對話需求，自主決定何時呼叫。',
+        '<strong>特性：</strong>具備副作用（寫入資料、發送請求），因此通常需要人類按下確認授權。',
+        '<strong>實際例子：</strong>幫你建立 GitHub PR、寫入資料庫、或發送 Slack 通知。'
+      ]
+    },
+    {
+      title: '📝 Prompts（提示詞範本 — 標準作業流程）',
+      analogy: '比喻：公司準備好的標準作業 SOP 表單',
+      points: [
+        '<strong>控制權：</strong>由使用者透過斜線指令（例如 <code>/review-code</code>）主動觸發。',
+        '<strong>特性：</strong>把複雜的提問技巧封裝成模板，讓新手也能一鍵引導 AI 產出高品質結果。',
+        '<strong>實際例子：</strong>一鍵啟動「幫我用大一新生聽得懂的方式解釋這段程式碼」。'
+      ]
+    }
+  ];
+
+  function showCap(idx, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const d = capData[idx];
+    document.getElementById('capDisplay').innerHTML = `
+      <h3>${d.title}</h3>
+      <p style="margin-bottom: 12px;"><strong>${d.analogy}</strong></p>
+      <ul>${d.points.map(p => `<li>${p}</li>`).join('')}</ul>
+    `;
+  }
+
+  function checkAnswer(btn, isCorrect) {
+    document.querySelectorAll('.quiz-option').forEach(b => b.classList.remove('correct', 'wrong'));
+    const fb = document.getElementById('quizFeedback');
+    if (isCorrect) {
+      btn.classList.add('correct');
+      fb.style.color = 'var(--success)';
+      fb.textContent = '🎉 答對了！寄信會影響外部世界，屬於具備副作用的 Tools，且會觸發人類授權確認！';
+    } else {
+      btn.classList.add('wrong');
+      fb.style.color = '#fca5a5';
+      fb.textContent = '❌ 再想一下喔！Resources 只能「唯讀」、Prompts 只是「提問模板」，真正能幫你執行動作的是哪一個？';
+    }
+  }
+
+  updateUI();
+</script>
+</body>
+</html>
